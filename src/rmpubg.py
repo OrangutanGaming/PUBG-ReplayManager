@@ -5,6 +5,7 @@ import tkinter.messagebox
 import os
 import shutil
 import re
+import zipfile
 
 
 class Window(tkinter.Frame):
@@ -13,6 +14,7 @@ class Window(tkinter.Frame):
         tkinter.Frame.__init__(self, master)
         self.master = master
         self.replayDir = os.getenv("LOCALAPPDATA") + "\TslGame\Saved\Demos"
+        self.tempDir = os.getenv("TEMP")
         self.init_window()
 
     def init_window(self):
@@ -28,8 +30,11 @@ class Window(tkinter.Frame):
 
         file = tkinter.Menu(menu, tearoff=False)
         file.add_command(label="Open folder", command=self.openFolder)
-        file.add_command(label="Import replay", command=self.importReplay)
         menu.add_cascade(label="File", menu=file)
+        importMenu = tkinter.Menu(file, tearoff=False)
+        importMenu.add_command(label="Import Folder", command=self.importReplayFolder)
+        importMenu.add_command(label="Import Archive", command=self.importReplayZip)
+        file.add_cascade(label="Import", menu=importMenu)
 
     def openFolder(self):
         if not os.path.isdir(self.replayDir):
@@ -37,13 +42,36 @@ class Window(tkinter.Frame):
             return 
         os.system("start /max {}".format(self.replayDir))
 
-    def importReplay(self):
+    def importReplayFolder(self):
         folder = tkinter.filedialog.askdirectory()
+        self.importReplay(folder)
 
-        if not folder:
+    def importReplayZip(self):
+        archives = tkinter.filedialog.askopenfilenames(defaultextension=".zip",
+                                                      filetypes=[("Archive", "*.zip")])
+
+        for archive in archives:
+            archiveName = archive.split("/")[-1]
+
+            if not archive.endswith((".zip")):
+                return
+
+            archiveName = archiveName.strip(".zip")
+
+            if os.path.isdir(self.tempDir + "/" + archiveName):
+                shutil.rmtree(self.tempDir + "/" + archiveName)
+
+            with zipfile.ZipFile(archive) as archiveF:
+                archiveF.extractall(self.tempDir + "/" + archiveName)
+
+            self.importReplay(self.tempDir + "/" + archiveName)
+
+    def importReplay(self, folderPath):
+
+        if not folderPath:
             return
 
-        folderName = folder.split("/")[-1]
+        folderName = folderPath.split("/")[-1]
 
         if os.path.isdir(self.replayDir + "/" + folderName):
             tkinter.messagebox.showerror("Already exists", "The replay already exists!")
@@ -65,7 +93,7 @@ class Window(tkinter.Frame):
 
         # TODO More tests
 
-        shutil.copytree(folder, self.replayDir + "/" + folderName)
+        shutil.copytree(folderPath, self.replayDir + "/" + folderName)
 
 
 root = tkinter.Tk()
