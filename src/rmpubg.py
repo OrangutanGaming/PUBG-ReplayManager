@@ -22,7 +22,6 @@ class Window(tkinter.Frame):
         self.pack(fill=tkinter.BOTH, expand=1)
 
         tkinter.Button(self, text="Open folder", command=self.openFolder).pack()
-        tkinter.Button(self, text="Import", command=self.importReplay).pack()
 
         menu = tkinter.Menu(self.master)
         self.master.config(menu=menu)
