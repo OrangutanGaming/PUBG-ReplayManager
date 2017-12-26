@@ -26,7 +26,7 @@ class Window(tkinter.Frame):
         menu = tkinter.Menu(self.master)
         self.master.config(menu=menu)
 
-        file = tkinter.Menu(menu)
+        file = tkinter.Menu(menu, tearoff=False)
         file.add_command(label="Open folder", command=self.openFolder)
         file.add_command(label="Import replay", command=self.importReplay)
         menu.add_cascade(label="File", menu=file)
