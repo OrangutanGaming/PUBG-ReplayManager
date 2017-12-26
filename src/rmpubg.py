@@ -31,10 +31,6 @@ class Window(tkinter.Frame):
         file.add_command(label="Import replay", command=self.importReplay)
         menu.add_cascade(label="File", menu=file)
 
-        # edit = tkinter.Menu(menu)
-        # edit.add_command(label="Undo")
-        # menu.add_cascade(label="Edit", menu=edit)
-
     def openFolder(self):
         if not os.path.isdir(self.replayDir):
             tkinter.messagebox.showerror("Folder doesn't exist", "The replays folder doesn't exist!")
