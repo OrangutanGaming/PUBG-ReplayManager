@@ -18,7 +18,7 @@ class Window(tkinter.Frame):
     def init_window(self):
 
         self.master.title("Replay Manager PUBG")
-        self.master.state('zoomed')
+        self.master.state("zoomed")
         self.pack(fill=tkinter.BOTH, expand=1)
 
         tkinter.Button(self, text="Open folder", command=self.openFolder).pack()
